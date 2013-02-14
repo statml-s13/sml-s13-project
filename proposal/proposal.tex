@@ -1,0 +1,60 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{fullpage}
+
+\title{10-702: Project Proposal\\
+Graph-valued Regression}
+\author{Willie Neiswanger\\
+\texttt{willie@cs.cmu.edu}
+\and
+Peter Schulam\\
+\texttt{pschulam@cs.cmu.edu}}
+
+\begin{document}
+
+\maketitle
+
+\section{Description}
+\label{sec:description}
+
+We will study methods in statistics and machine learning that focus on
+regression in the space of graphs. The graphical lasso
+\cite{friedman2008} estimates the precision (inverse covariance)
+matrix of a random vector $\boldsymbol{Y}$ assumed to be drawn from a
+multivariate Gaussian. The paper \cite{liu2009} relaxes this
+assumption.
+
+Graph-valued regression is the problem of estimating the inverse
+covariance matrix of a random vector $\boldsymbol{Y}$ conditioned on
+another random vector $\boldsymbol{X}$. \cite{liu2010} describes and
+analyzes an approach to this problem that estimates precision matrices
+within partitions of $\boldsymbol{\mathcal{X}}$ that are induced using
+a variant of classification and regression trees. This method also
+relies on a Gaussian assumption: $\boldsymbol{Y} | \boldsymbol{X} \sim
+\mathcal{N}(\mu(x), \Sigma(x))$. We would like to explore ways in
+which the non-paranormal relaxation can be applied to graph-valued
+regression.
+
+\section{Scope}
+\label{sec:scope}
+
+At minimum, we plan to read the following papers:
+
+\begin{enumerate}[1.]
+\item Graph-valued Regression \cite{liu2010}
+\item The Non-paranormal: Semiparametric Estimation of High Dimensional Undirected Graphs \cite{liu2009}
+\item Sparse Inverse Covariance Estimation with the Graphical Lasso \cite{friedman2008}
+\item Model Selection in Gaussian Graphical Models: High-dimensional Consistency of $\ell_1$ Regularized MLE \cite{ravikumar2008}
+\item Sparse Permutation Invariant Covariance Estimation \cite{rothman2008}
+\item Time-varying Undirected Graphs \cite{zhou2010}
+\end{enumerate}
+
+If possible, we would like to explore the theory for a relaxation of
+the Gaussian assumption used in \cite{liu2010}.
+
+\bibliographystyle{plain}
+\bibliography{proposal}
+
+\end{document}
