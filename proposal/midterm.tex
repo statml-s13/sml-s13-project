@@ -1,0 +1,207 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{fullpage}
+
+\title{10-702: Midway Report\\
+Graph-valued Regression}
+\author{Willie Neiswanger\\
+\texttt{willie@cs.cmu.edu}
+\and
+Peter Schulam\\
+\texttt{pschulam@cs.cmu.edu}}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+
+It can be difficult to estimate the parameters of a high dimensional multivariate normal. The number of parameters is $O(p^2)$, and, if the number of paramters grows with $n$ (the number of samples), estimation can be especially difficult. Graphical models capture independence assumptions in high dimensional distributions that can reduce the number of parameters in the model. When domain knowledge can be used to construct a graphical model with reasonable independence assumptions, such savings can be significant. In cases when independence assumptions are difficult to make, however, it can be useful to estimate the structure of a graphical model from data. This problem has been studied in the context of multivariate normal data, where estimating the non-zero entries of the precision matrix $\Omega$ is equivalent to estimating the edges in a graph $\mathcal{G}$ where each node $V \in \mathcal{V}$ is a random variable (dimension in the multivariate normal).
+
+To see why estimating the non-zero entries of $\Omega$ is equivalent to estimating the edges present in a graphical model $\mathcal{G}$, we can derive the conditional probability of two variables in a Gaussian graphical model given all other variables. Suppose we have a random vector $X \in \mathbb{R}^{10}$, and we wish to compute $P(x_1, x_2 | x_3, \ldots, x_{10})$. Let the covariance matrix $\Sigma$ be defined as
+
+\begin{align}
+    \Sigma &= \begin{bmatrix}
+        \Sigma_{11} & \Sigma_{12} \\
+        \Sigma_{21} & \Sigma_{22} \\
+    \end{bmatrix}
+    \text{ where }
+    \Sigma_{11} = \begin{bmatrix}
+        \sigma_{1} & \sigma_{12} \\
+        \sigma_{12} & \sigma_{2} \\
+    \end{bmatrix}
+\end{align}
+
+The conditional probability $P(x_1, x_2 | x_3, \ldots, x_{10})$ is also normal with covariance matrix $\Sigma^\prime = (\Sigma_{11} - \Sigma_{12} \Sigma_{22}^{-1} \Sigma_{21})^{-1} = \Omega_{11}$, where $\Omega_{11}$ is the block of the precision matrix corresponding to $x_1, x_2$. We then see that
+
+\begin{align}
+    p(x_1, x_2 | x_3, \ldots, x_{10}) &\propto \exp \left\{
+      - \frac{1}{2}
+      \begin{pmatrix}
+        x_1 \\
+        x_2
+      \end{pmatrix}^T
+      \begin{pmatrix}
+        \omega_{11} & \omega_{12} \\
+        \omega_{21} & \omega_{22} \\
+      \end{pmatrix}
+      \begin{pmatrix}
+        x_1 \\
+        x_1
+      \end{pmatrix}
+    \right\} \\
+    &= \exp \left\{
+      - \frac{1}{2}
+      \left(
+        \omega_{11} x_1^2 + 2 x_1 x_2 \omega_{12} + \omega_{22} x_2^2
+      \right)
+    \right\}
+\end{align}
+
+where the conditional joint distribution becomes the product of two independent normals if $\omega_{12} = \omega_{21} = 0$. In a Gaussian graphical model $\mathcal{G}$, the lack of an edge between two nodes $X_i, X_j$ implies that $X_i \bot X_j | X_{-i,j}$. Since we have shown that this is also the case when $\Omega_{ij} = \Omega_{ji} = 0$, we can estimate the structure of a Gaussian graphical model by estimating the non-zero entries of its precision matrix.
+
+One of the more successful techniques for estimating a sparse precision matrix (yielding a graphical model with few edges) is the graphical lasso \cite{friedman2008}. The glasso is one technique for solving the following optimization problem
+
+\begin{align}
+    \hat{\Omega} = \underset{\Omega \succ 0}{\arg\min} \left( tr(S\Omega) - \log |\Omega| + \lambda \|\Omega\|_1 \right)
+\end{align}
+
+In this paper, we study an extended version of this problem. Suppose we have random vectors $Y$ and $X$ with dimension $p$ and $q$ respectively. \textit{Graph-valued regression} is the problem of estimating the undirected graph $G(x)$ corresponding to the distribution $P(\cdot|X=x)$.
+
+\section{Simple Estimators based on Glasso}
+
+parametric
+
+kernel
+
+what's wrong with these?
+
+\section{Go-CART}
+Definition of Go-CART.
+
+\section{Statistical Analysis of Go-CART}
+
+There are three theoretical results in the Go-CART paper. Two of them bound the excess risk of the two different estimators (penalized empirical risk and held-out risk), and the third one provides a consistency result using a definition of consistency that can be applied to dyadic tree-based partitions. We summarize the theorems and sketch the proofs supplied in the appendix of \cite{liu2009}.
+
+\subsection{Bounds for Penalized Empirical Risk}
+
+This result gives a bound on the excess of the penalized empirical risk estimator. Formally, the result states that with a penalty term $pen(T)$
+
+\begin{align}
+    pen(T) = (C_1 + 1) L_n m_T
+    \sqrt{
+        \frac{[[T]] \log 2 + 2 \log p + \log(48/\delta)}
+        {n}
+    }
+\end{align}
+
+where $C_1$ is a penalty term involving constants formally defined in Assumptions 4.1 and 4.2 in \cite{liu2009}, the excess risk inequality for sufficiently large $n$
+
+\begin{align}
+    R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) - R^*
+    \le \underset{T \in \mathcal{T}_N}{\inf} \left\{
+        2 pen(T)
+        + \underset{\mu_{\mathcal{X}_j} \in M_j,\Omega_{\mathcal{X}_j} \in \Lambda_j}{\inf}
+        (R(T, \mu_T, \Omega_T) - R*)
+    \right\}
+\end{align}
+
+holds with probability at least $1 - \delta$. Intuitively, this result states that the difference between the true risk of the estimate obtained by minimizing the penalized empirical risk and the oracle risk $R^*$ is bounded by a term that depends on the tree $T \in \mathcal{T}_N$ that simultaneously minimizes the excess risk and twice the penalization parameter defined above. This means that we can bound with high probability the excess risk of our estimate using $2 pen(T)$ (which we don't know specifically).
+
+The proof of this result uses a series of concentration of measure inequalities to prove the bound. Roughly, the authors first bound the absolute difference between the true risk of any estimate and its empirical risk. They first upper bound this risk using a sum of two summations over all partitions induced by the estimated tree $T$. They bound one of these terms using Hoeffding's, and then construct a uniform bound over the set of all trees using union bound (since we have defined a priori that we only consider trees of depth $K$, which is a finite set). The second term is bounded using Bernstein's inequality, and also relies on a number of key assumptions (namely Assumption 4.1 and 4.2 in \cite{liu2009}). These bounds are then used to construct a penalty term $pen(T)$ that leads to the result.
+
+\subsection{Bounds for Held-Out Risk}
+
+The bound on the excess risk of the held-out estimator depends on a function $\phi_n(T)$ of $n$ and $T$ defined to be
+
+\begin{align}
+    \phi_n(T) = (C_2 + \sqrt{2}) L_n m_T
+    \sqrt{
+        \frac{[[T]] \log 2 + 2 \log p + \log(384/\delta)}{n}
+    }
+\end{align}
+
+Once the data $\mathcal{D}$ has been partitioned into two data sets $\mathcal{D}_1$ and $\mathcal{D}_2$, the estimator constructed using the held-out risk criterion described above has an excess risk that is bound by
+
+\begin{align}
+    R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) - R^*
+    \le \underset{T \in \mathcal{T}_N}{\inf}
+    \left\{
+        3 \phi_n(T) +
+        \underset{\mu_{\mathcal{X}_j} \in M_j, \Omega_{\mathcal{X}_j} \in \Lambda_j}{\inf}
+        (R(T, \mu_T, \Omega_T) - R^*)
+    \right\} + \phi_n (\hat{T})
+\end{align}
+
+with probability at least $1 - \delta$. This result is similar to the previous, but differs in one important aspect. Note that there is a term $\phi_n(\hat{T})$ on the right hand side that is a random value (since it depends on our estimated dyadic tree $\hat{T}$). The proof is similar to the previous, and indeed uses the bound on the absolute difference between the true and empirical risk of an estimate.
+
+\subsection{Consistency of the Estimated Partition}
+
+The final result relies on a strong assumption that the model is correct. That is, that the conditional distribution of $Y$ given $X$ is truly
+
+\begin{align}
+    Y | X = x \sim N_p(\mu^*_T(x), \Omega_T^*(x))
+\end{align}
+
+This is a rather strong assumption, but, if it holds, we can define the following notion of consistency. \cite{liu2009} define a tree estimation procedure $\hat{T}$ to be \textit{tree partition consistent} if
+
+\begin{align}
+    P \left(
+        \Pi(T^*) \subset \Pi(\hat{T})
+    \right) \to 1
+    \text{ as } n \to \infty
+\end{align}
+
+where we say that a partition $\Pi(T_2) \subset \Pi(T_1)$ if $T_1$ can be obtained by further splitting the rectangles at the leaves of $T_2$ (that is if $T_1$ is induces a finer partition of the space than $T_2$). The final result of the paper claims that both the penalized empirical risk and held-out risk estimators are tree partition consistent. We have not had time to go over this result in detail, but will provide additional details about the proof in future work. 
+
+\section{Conclusion and Future Work}
+
+
+
+
+
+\section{Description}
+\label{sec:description}
+
+We will study methods in statistics and machine learning that focus on
+regression in the space of graphs. The graphical lasso
+\cite{friedman2008} estimates the precision (inverse covariance)
+matrix of a random vector $\boldsymbol{Y}$ assumed to be drawn from a
+multivariate Gaussian. The paper \cite{liu2009} relaxes this
+assumption.
+
+Graph-valued regression is the problem of estimating the inverse
+covariance matrix of a random vector $\boldsymbol{Y}$ conditioned on
+another random vector $\boldsymbol{X}$. \cite{liu2010} describes and
+analyzes an approach to this problem that estimates precision matrices
+within partitions of $\boldsymbol{\mathcal{X}}$ that are induced using
+a variant of classification and regression trees. This method also
+relies on a Gaussian assumption: $\boldsymbol{Y} | \boldsymbol{X} \sim
+\mathcal{N}(\mu(x), \Sigma(x))$. We would like to explore ways in
+which the non-paranormal relaxation can be applied to graph-valued
+regression.
+
+\section{Scope}
+\label{sec:scope}
+
+At minimum, we plan to read the following papers:
+
+\begin{enumerate}[1.]
+\item Graph-valued Regression \cite{liu2010}
+\item The Non-paranormal: Semiparametric Estimation of High Dimensional Undirected Graphs \cite{liu2009}
+\item Sparse Inverse Covariance Estimation with the Graphical Lasso \cite{friedman2008}
+\item Model Selection in Gaussian Graphical Models: High-dimensional Consistency of $\ell_1$ Regularized MLE \cite{ravikumar2008}
+\item Sparse Permutation Invariant Covariance Estimation \cite{rothman2008}
+\item Time-varying Undirected Graphs \cite{zhou2010}
+\end{enumerate}
+
+If possible, we would like to explore the theory for a relaxation of
+the Gaussian assumption used in \cite{liu2010}.
+
+\bibliographystyle{plain}
+\bibliography{proposal}
+
+\end{document}
