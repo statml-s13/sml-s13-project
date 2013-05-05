@@ -1,4 +1,5 @@
 \documentclass[12pt]{article}
+\usepackage{nips13submit_e}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{enumerate}
@@ -19,9 +20,29 @@ Peter Schulam\\
 \section{Introduction}
 \label{sec:introduction}
 
-It can be difficult to estimate the parameters of a high dimensional multivariate normal. The number of parameters is $O(p^2)$, and, if the number of paramters grows with $n$ (the number of samples), estimation can be especially difficult. Graphical models capture independence assumptions in high dimensional distributions that can reduce the number of parameters in the model. When domain knowledge can be used to construct a graphical model with reasonable independence assumptions, such savings can be significant. In cases when independence assumptions are difficult to make, however, it can be useful to estimate the structure of a graphical model from data. This problem has been studied in the context of multivariate normal data, where estimating the non-zero entries of the precision matrix $\Omega$ is equivalent to estimating the edges in a graph $\mathcal{G}$ where each node $V \in \mathcal{V}$ is a random variable (dimension in the multivariate normal).
+It can be difficult to estimate the parameters of a high dimensional
+multivariate normal. The number of parameters is $O(p^2)$, and, if the
+number of paramters grows with $n$ (the number of samples), estimation
+can be especially difficult. Graphical models capture independence
+assumptions in high dimensional distributions that can reduce the
+number of parameters in the model. When domain knowledge can be used
+to construct a graphical model with reasonable independence
+assumptions, such savings can be significant. In cases when
+independence assumptions are difficult to make, however, it can be
+useful to estimate the structure of a graphical model from data. This
+problem has been studied in the context of multivariate normal data,
+where estimating the non-zero entries of the precision matrix $\Omega$
+is equivalent to estimating the edges in a graph $\mathcal{G}$ where
+each node $V \in \mathcal{V}$ is a random variable (dimension in the
+multivariate normal).
 
-To see why estimating the non-zero entries of $\Omega$ is equivalent to estimating the edges present in a graphical model $\mathcal{G}$, we can derive the conditional probability of two variables in a Gaussian graphical model given all other variables. Suppose we have a random vector $X \in \mathbb{R}^{10}$, and we wish to compute $P(x_1, x_2 | x_3, \ldots, x_{10})$. Let the covariance matrix $\Sigma$ be defined as
+To see why estimating the non-zero entries of $\Omega$ is equivalent
+to estimating the edges present in a graphical model $\mathcal{G}$, we
+can derive the conditional probability of two variables in a Gaussian
+graphical model given all other variables. Suppose we have a random
+vector $X \in \mathbb{R}^{10}$, and we wish to compute $P(x_1, x_2 |
+x_3, \ldots, x_{10})$. Let the covariance matrix $\Sigma$ be defined
+as
 
 \begin{align}
     \Sigma &= \begin{bmatrix}
@@ -35,7 +56,11 @@ To see why estimating the non-zero entries of $\Omega$ is equivalent to estimati
     \end{bmatrix}
 \end{align}
 
-The conditional probability $P(x_1, x_2 | x_3, \ldots, x_{10})$ is also normal with covariance matrix $\Sigma^\prime = (\Sigma_{11} - \Sigma_{12} \Sigma_{22}^{-1} \Sigma_{21})^{-1} = \Omega_{11}$, where $\Omega_{11}$ is the block of the precision matrix corresponding to $x_1, x_2$. We then see that
+The conditional probability $P(x_1, x_2 | x_3, \ldots, x_{10})$ is
+also normal with covariance matrix $\Sigma^\prime = (\Sigma_{11} -
+\Sigma_{12} \Sigma_{22}^{-1} \Sigma_{21})^{-1} = \Omega_{11}$, where
+$\Omega_{11}$ is the block of the precision matrix corresponding to
+$x_1, x_2$. We then see that
 
 \begin{align}
     p(x_1, x_2 | x_3, \ldots, x_{10}) &\propto \exp \left\{
@@ -61,98 +86,196 @@ The conditional probability $P(x_1, x_2 | x_3, \ldots, x_{10})$ is also normal w
     \right\}
 \end{align}
 
-where the conditional joint distribution becomes the product of two independent normals if $\omega_{12} = \omega_{21} = 0$. In a Gaussian graphical model $\mathcal{G}$, the lack of an edge between two nodes $X_i, X_j$ implies that $X_i \bot X_j | X_{-i,j}$. Since we have shown that this is also the case when $\Omega_{ij} = \Omega_{ji} = 0$, we can estimate the structure of a Gaussian graphical model by estimating the non-zero entries of its precision matrix.
+where the conditional joint distribution becomes the product of two
+independent normals if $\omega_{12} = \omega_{21} = 0$. In a Gaussian
+graphical model $\mathcal{G}$, the lack of an edge between two nodes
+$X_i, X_j$ implies that $X_i \bot X_j | X_{-i,j}$. Since we have shown
+that this is also the case when $\Omega_{ij} = \Omega_{ji} = 0$, we
+can estimate the structure of a Gaussian graphical model by estimating
+the non-zero entries of its precision matrix.
 
-One of the more successful techniques for estimating a sparse precision matrix (yielding a graphical model with few edges) is the graphical lasso \cite{friedman2008}. The glasso is one technique for solving the following optimization problem
+One of the more successful techniques for estimating a sparse
+precision matrix (yielding a graphical model with few edges) is the
+graphical lasso \cite{friedman2008}. The glasso is one technique for
+solving the following optimization problem
 
 \begin{align}
 \label{glasso}
     \hat{\Omega} = \underset{\Omega \succ 0}{\arg\min} \left( tr(S\Omega) - \log |\Omega| + \lambda \|\Omega\|_1 \right)
 \end{align}
 
-In this paper, we study an extended version of this problem. Suppose we have random vectors $Y$ and $X$ with dimension $p$ and $q$ respectively. \textit{Graph-valued regression} is the problem of estimating the undirected graph $G(x)$ corresponding to conditional independencies in the distribution $P(Y|X=x)$.
+In this paper, we study an extended version of this problem. Suppose
+we have random vectors $Y$ and $X$ with dimension $p$ and $q$
+respectively. \textit{Graph-valued regression} is the problem of
+estimating the undirected graph $G(x)$ corresponding to conditional
+independencies in the distribution $P(Y|X=x)$.
 
 \section{Simple Graph Estimators based on Glasso}
 \label{simpleEstimators}
 
-We describe three types of graph estimators that are built upon, or make use of, the glasso algorithm
+We describe three types of graph estimators that are built upon, or
+make use of, the glasso algorithm
 
 \subsection{Parametric Estimators}
-A simple approach involves assuming that $Z = (X,Y)$ is distributed according to a multivariate Gaussian with covariance matrix
+
+A simple approach involves assuming that $Z = (X,Y)$ is distributed
+according to a multivariate Gaussian with covariance matrix
+
 \begin{align}
     \Sigma = \left( \begin{matrix} \Sigma_X& \Sigma_{XY} \\ \Sigma_{YX} & \Sigma_Y \end{matrix} \right).
 \end{align}
-Under this assumption, the conditional distribution of $Y|(X=x)$ is also distributed according to a multivariate Gaussian with covariance matrix
+
+Under this assumption, the conditional distribution of $Y|(X=x)$ is
+also distributed according to a multivariate Gaussian with covariance
+matrix
+
 \begin{align}
     \Sigma_{Y|X} = \Sigma_Y - \Sigma_{YX}\Omega_X\Sigma_{XY}.
 \end{align}
-We can estimate $\Sigma_X,\Sigma_Y$, and $\Sigma_{XY}$ with their sample quantities $\hat{\Sigma}_X$,$\hat{\Sigma}_Y$, and $\hat{\Sigma}_{XY}$, and can estimate $\Omega_X$ using the glasso. Finally, a sparse estimate $\hat{\Omega}_{Y|X}$ of the precision matrix $\Omega_{Y|X}$ can be achieved by plugging $\hat{\Sigma}_{Y|X}$ into glasso.
+
+We can estimate $\Sigma_X,\Sigma_Y$, and $\Sigma_{XY}$ with their
+sample quantities $\hat{\Sigma}_X$,$\hat{\Sigma}_Y$, and
+$\hat{\Sigma}_{XY}$, and can estimate $\Omega_X$ using the
+glasso. Finally, a sparse estimate $\hat{\Omega}_{Y|X}$ of the
+precision matrix $\Omega_{Y|X}$ can be achieved by plugging
+$\hat{\Sigma}_{Y|X}$ into glasso.
 
 \subsection{Kernel Smoothing Estimators}
-Without making any assumptions about the marginal distribution over $X$, one can make the assumption that the conditional distribution $P(Y|X)$ is a multivariate Gaussian, such that
+
+Without making any assumptions about the marginal distribution over
+$X$, one can make the assumption that the conditional distribution
+$P(Y|X)$ is a multivariate Gaussian, such that
+
 \begin{align}
     Y|(X=x) \sim N(\mu(x),\Sigma(x)).
 \end{align}
-Furthermore, by assuming that both $\mu(x)$ and $\Sigma(x)$ are smooth functions of $x$, one can estimate $\Sigma(x)$ via kernel smoothing, with the estimator
+
+Furthermore, by assuming that both $\mu(x)$ and $\Sigma(x)$ are smooth
+functions of $x$, one can estimate $\Sigma(x)$ via kernel smoothing,
+with the estimator
+
 \begin{align}
     \hat{\Sigma}(x) = \sum_{i=1}^n K \left( \frac{\|x-x_i\|}{h} \right) (y_i - \hat{\mu}(x)) (y_i - \hat{\mu}(x))^{\top} / \sum_{i=1}^n K \left( \frac{\| x - x_i \|}{h} \right)
 \end{align}
+
 and
+
 \begin{align}
     \hat{\mu}(x) = \sum_{i=1}^n K\left( \frac{\|x-x_i\|}{h} \right) y_i / \sum_{i=1}^n K\left( \frac{\|x-x_i\|}{h} \right)
 \end{align}
-where $K$ denotes some kernel and $h>0$ is a bandwith parameter. Afterwards, one can apply glasso (Equation~\ref{glasso}), using the matrix $S = \hat{\Sigma}(x)$ to estimate the graph structure $G(x)$.
+
+where $K$ denotes some kernel and $h>0$ is a bandwith
+parameter. Afterwards, one can apply glasso (Equation~\ref{glasso}),
+using the matrix $S = \hat{\Sigma}(x)$ to estimate the graph structure
+$G(x)$.
 
 \subsection{Partition Estimators}
-Both of the previous glasso-based simple graph estimators have trouble recovering the partition of the input space $\mathcal{X}_1,\ldots,\mathcal{X}_m$ that corresponds with the set of output graphs. In the case of parametric estimators, we estimate a graph that does not vary with different values of $X$, and in the case of kernel smoothing estimators, it is computationally challenging to reconstruct the partition.
 
-An approach to better estimate the partition involves splitting the input domain $\mathcal{X}$ into finitely many connected regions $\mathcal{X}_1,\ldots,\mathcal{X}_m$, and applying glasso in each region $\mathcal{X}_j$ to get an estimated graph $\hat{G_j}$. Afterwards the estimated graph regression (or, equivalently, the estimated parition) is the mapping $\hat{G}(x) = \hat{G}_j$ for all $x \in \mathcal{X}_j$.
+Both of the previous glasso-based simple graph estimators have trouble
+recovering the partition of the input space
+$\mathcal{X}_1,\ldots,\mathcal{X}_m$ that corresponds with the set of
+output graphs. In the case of parametric estimators, we estimate a
+graph that does not vary with different values of $X$, and in the case
+of kernel smoothing estimators, it is computationally challenging to
+reconstruct the partition.
 
-In order to find the parition, this paper uses ideas from the CART (classification and regression trees) algorithm \cite{breiman1993classification}. In particular, a tree is defined, where nodes in the tree correspond to elements of recursively defined partitions of a unit cube over the input space $\mathcal{X}$. The method defined in this paper, termed Graph-optimized CART (Go-CART), then estimates a graph for each leaf node in the tree (or equivalently, for each element of the most-refined partitions). Go-CART can therefore estimate the graph $G(x)$ associated with $P(Y | X=x)$ for each $x \in \mathcal{X}$.
+An approach to better estimate the partition involves splitting the
+input domain $\mathcal{X}$ into finitely many connected regions
+$\mathcal{X}_1,\ldots,\mathcal{X}_m$, and applying glasso in each
+region $\mathcal{X}_j$ to get an estimated graph
+$\hat{G_j}$. Afterwards the estimated graph regression (or,
+equivalently, the estimated parition) is the mapping $\hat{G}(x) =
+\hat{G}_j$ for all $x \in \mathcal{X}_j$.
+
+In order to find the parition, this paper uses ideas from the CART
+(classification and regression trees) algorithm
+\cite{breiman1993classification}. In particular, a tree is defined,
+where nodes in the tree correspond to elements of recursively defined
+partitions of a unit cube over the input space $\mathcal{X}$. The
+method defined in this paper, termed Graph-optimized CART (Go-CART),
+then estimates a graph for each leaf node in the tree (or
+equivalently, for each element of the most-refined
+partitions). Go-CART can therefore estimate the graph $G(x)$
+associated with $P(Y | X=x)$ for each $x \in \mathcal{X}$.
 
 \section{Go-CART}
-Consider random vectors $X \in \mathbb{R}^d$ and $Y \in \mathbb{R}^p$ and let $(x_1,y_1),\ldots,(x_n,y_n)$ denote i.i.d samples from $P(X,Y)$. Let $\mathcal{X}$ and $\mathcal{Y}$ denote the domains of $X$ and $Y$. Go-CART assumes that
+
+Consider random vectors $X \in \mathbb{R}^d$ and $Y \in \mathbb{R}^p$
+and let $(x_1,y_1),\ldots,(x_n,y_n)$ denote i.i.d samples from
+$P(X,Y)$. Let $\mathcal{X}$ and $\mathcal{Y}$ denote the domains of
+$X$ and $Y$. Go-CART assumes that
+
 \begin{align}
     Y|(X=x) \sim \text{N}_p(\mu(x),\Sigma(x))
 \end{align}
-where $\mu:\mathbb{R}^d \rightarrow \mathbb{R}^p$ and $\Sigma:\mathbb{R}^d \rightarrow \mathbb{R}^{p \times p}$. Go-CART is a partition based estimator, where $\mathcal{X}$ is partitioned into $\{ \mathcal{X}_1,\ldots,\mathcal{X}_m \}$, and glasso is applied in each partition element $\mathcal{X}_j$ to estimate a graph $\hat{G}_j$.
 
-Go-CART uses a Dyadic Partitioning Tree (DPT) to partition the input space $\mathcal{X} = [0,1]^d$, where each DPT $T$ is constructed by recursively dividing $\mathcal{X}$ with axis-orthogonal equally-spaced splits, producing a partition denoted $\Pi(T)$ with $m_T$ partition elements. For an integer $N=2^K$, $K \in \mathbb{Z}_+$, let $\mathcal{T}_N$ denote the set of DPTs such that no partition has a side length smaller than $2^{-K}$. For a given DPT $T$, let
+where $\mu:\mathbb{R}^d \rightarrow \mathbb{R}^p$ and
+$\Sigma:\mathbb{R}^d \rightarrow \mathbb{R}^{p \times p}$. Go-CART is
+a partition based estimator, where $\mathcal{X}$ is partitioned into
+$\{ \mathcal{X}_1,\ldots,\mathcal{X}_m \}$, and glasso is applied in
+each partition element $\mathcal{X}_j$ to estimate a graph
+$\hat{G}_j$.
+
+Go-CART uses a Dyadic Partitioning Tree (DPT) to partition the input
+space $\mathcal{X} = [0,1]^d$, where each DPT $T$ is constructed by
+recursively dividing $\mathcal{X}$ with axis-orthogonal equally-spaced
+splits, producing a partition denoted $\Pi(T)$ with $m_T$ partition
+elements. For an integer $N=2^K$, $K \in \mathbb{Z}_+$, let
+$\mathcal{T}_N$ denote the set of DPTs such that no partition has a
+side length smaller than $2^{-K}$. For a given DPT $T$, let
+
 \begin{align}
     \mu_T(x) = \sum_{j=1}^{m_T} \mu_{\mathcal{X}_j} \cdot \mathbb{I}(x \in \mathcal{X}_j)
     \hspace{3mm} \text{ and } \hspace{3mm}
     \Omega_T(x) = \sum_{j=1}^{m_T} \Omega_{\mathcal{X}_j} \cdot \mathbb{I}(x \in \mathcal{X}_j).
 \end{align}
 
-Furthermore, let the negative conditional log-likelihood risk $R(T,\mu_T,\Omega_T)$ and the sample risk $\hat{R}(T,\mu_T,\Omega_T)$ be
+Furthermore, let the negative conditional log-likelihood risk
+$R(T,\mu_T,\Omega_T)$ and the sample risk $\hat{R}(T,\mu_T,\Omega_T)$
+be
+
 \begin{align}
     R(T,\mu_T,\Omega_T) &= \sum_{j=1}^{m_T} \mathbb{E} \left[ \left( \text{tr} \left[ \Omega_{\mathcal{X}_j} \left( (Y - \mu_{\mathcal{X}_j})(Y - \mu_{\mathcal{X}_j})^{\top} \right) \right]  - \text{log} |\Omega_{\mathcal{X}_j} | \right)  \cdot \mathbb{I}(X \in \mathcal{X}_j) \right] \\
     \hat{R}(T,\mu_T,\Omega_T) &= \frac{1}{n} \sum_{i=1}^n \sum_{j=1}^{m_T} \left[ \left( \text{tr} \left[ \Omega_{\mathcal{X}_j} \left( (y_i - \mu_{\mathcal{X}_j})(y_i - \mu_{\mathcal{X}_j})^{\top} \right) \right]  - \text{log} |\Omega_{\mathcal{X}_j} | \right)  \cdot \mathbb{I}(x_i \in \mathcal{X}_j) \right].
 \end{align}
 
-Then, we can define the \emph{penalized empirical risk minimization Go-CART estimator} to be
+Then, we can define the \emph{penalized empirical risk minimization
+  Go-CART estimator} to be
+
 \begin{align}
     \left( \hat{T}, \{ \hat{\mu}_{\hat{\mathcal{X}}_j}, \hat{\Omega}_{\hat{\mathcal{X}}_j} \}_{j=1}^{m_{\hat{T}}} \right) 
     = \text{argmin}_{T \in \mathcal{T}_N, \mu_{\mathcal{X}_j} \in M_j, \Omega_{\mathcal{X}_j} \in \Lambda_j} 
     \left\{ \hat{R}(T,\mu_T,\Omega_T) + \text{pen}(T) \right\}
 \end{align}
+
 where
+
 \begin{align}
     \text{pen}(T) = \gamma_n \cdot m_T \sqrt{\frac{[[T]]\text{log}2 + 2\text{log}(np)}{n}}.
 \end{align}
-In the above expression, the term $[[T]] > 0$ denotes a prefix code over all DPTs $T \in \mathcal{T}_N$ such that $\sum_{T\in \mathcal{T}_N} 2^{-[[T]]} \leq 1$, such as
+
+In the above expression, the term $[[T]] > 0$ denotes a prefix code
+over all DPTs $T \in \mathcal{T}_N$ such that $\sum_{T\in
+  \mathcal{T}_N} 2^{-[[T]]} \leq 1$, such as
+
 \begin{align}
     [[T]] = 3 m_T - 1 + (m_T - 1)\text{log }d / \text{log }2.
 \end{align}
 
-
 \section{Statistical Analysis of Go-CART}
 
-There are three theoretical results in the Go-CART paper. Two of them bound the excess risk of the two different estimators (penalized empirical risk and held-out risk), and the third one provides a consistency result using a definition of consistency that can be applied to dyadic tree-based partitions. We summarize the theorems and sketch the proofs supplied in the appendix of \cite{liu2010}.
+There are three theoretical results in the Go-CART paper. Two of them
+bound the excess risk of the two different estimators (penalized
+empirical risk and held-out risk), and the third one provides a
+consistency result using a definition of consistency that can be
+applied to dyadic tree-based partitions. We summarize the theorems and
+sketch the proofs supplied in the appendix of \cite{liu2010}.
 
 \subsection{Bounds for Penalized Empirical Risk}
 
-This result gives a bound on the excess of the penalized empirical risk estimator. Formally, the result states that with a penalty term $pen(T)$
+This result gives a bound on the excess of the penalized empirical
+risk estimator. Formally, the result states that with a penalty term
+$pen(T)$
 
 \begin{align}
     pen(T) = (C_1 + 1) L_n m_T
@@ -162,7 +285,9 @@ This result gives a bound on the excess of the penalized empirical risk estimato
     }
 \end{align}
 
-where $C_1$ is a penalty term involving constants formally defined in Assumptions 4.1 and 4.2 in \cite{liu2010}, the excess risk inequality for sufficiently large $n$
+where $C_1$ is a penalty term involving constants formally defined in
+Assumptions 4.1 and 4.2 in \cite{liu2010}, the excess risk inequality
+for sufficiently large $n$
 
 \begin{align}
     R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) - R^*
@@ -173,13 +298,32 @@ where $C_1$ is a penalty term involving constants formally defined in Assumption
     \right\}
 \end{align}
 
-holds with probability at least $1 - \delta$. Intuitively, this result states that the difference between the true risk of the estimate obtained by minimizing the penalized empirical risk and the oracle risk $R^*$ is bounded by a term that depends on the tree $T \in \mathcal{T}_N$ that simultaneously minimizes the excess risk and twice the penalization parameter defined above. This means that we can bound with high probability the excess risk of our estimate using $2 pen(T)$ (which we don't know specifically).
+holds with probability at least $1 - \delta$. Intuitively, this result
+states that the difference between the true risk of the estimate
+obtained by minimizing the penalized empirical risk and the oracle
+risk $R^*$ is bounded by a term that depends on the tree $T \in
+\mathcal{T}_N$ that simultaneously minimizes the excess risk and twice
+the penalization parameter defined above. This means that we can bound
+with high probability the excess risk of our estimate using $2 pen(T)$
+(which we don't know specifically).
 
-The proof of this result uses a series of concentration of measure inequalities to prove the bound. Roughly, the authors first bound the absolute difference between the true risk of any estimate and its empirical risk. They first upper bound this risk using a sum of two summations over all partitions induced by the estimated tree $T$. They bound one of these terms using Hoeffding's, and then construct a uniform bound over the set of all trees using union bound (since we have defined a priori that we only consider trees of depth $K$, which is a finite set). The second term is bounded using Bernstein's inequality, and also relies on a number of key assumptions (namely Assumption 4.1 and 4.2 in \cite{liu2010}). These bounds are then used to construct a penalty term $pen(T)$ that leads to the result.
+The proof of this result uses a series of concentration of measure
+inequalities to prove the bound. Roughly, the authors first bound the
+absolute difference between the true risk of any estimate and its
+empirical risk. They first upper bound this risk using a sum of two
+summations over all partitions induced by the estimated tree $T$. They
+bound one of these terms using Hoeffding's, and then construct a
+uniform bound over the set of all trees using union bound (since we
+have defined a priori that we only consider trees of depth $K$, which
+is a finite set). The second term is bounded using Bernstein's
+inequality, and also relies on a number of key assumptions (namely
+Assumption 4.1 and 4.2 in \cite{liu2010}). These bounds are then used
+to construct a penalty term $pen(T)$ that leads to the result.
 
 \subsection{Bounds for Held-Out Risk}
 
-The bound on the excess risk of the held-out estimator depends on a function $\phi_n(T)$ of $n$ and $T$ defined to be
+The bound on the excess risk of the held-out estimator depends on a
+function $\phi_n(T)$ of $n$ and $T$ defined to be
 
 \begin{align}
     \phi_n(T) = (C_2 + \sqrt{2}) L_n m_T
@@ -188,7 +332,10 @@ The bound on the excess risk of the held-out estimator depends on a function $\p
     }
 \end{align}
 
-Once the data $\mathcal{D}$ has been partitioned into two data sets $\mathcal{D}_1$ and $\mathcal{D}_2$, the estimator constructed using the held-out risk criterion described above has an excess risk that is bound by
+Once the data $\mathcal{D}$ has been partitioned into two data sets
+$\mathcal{D}_1$ and $\mathcal{D}_2$, the estimator constructed using
+the held-out risk criterion described above has an excess risk that is
+bound by
 
 \begin{align}
     R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) - R^*
@@ -200,17 +347,27 @@ Once the data $\mathcal{D}$ has been partitioned into two data sets $\mathcal{D}
     \right\} + \phi_n (\hat{T})
 \end{align}
 
-with probability at least $1 - \delta$. This result is similar to the previous, but differs in one important aspect. Note that there is a term $\phi_n(\hat{T})$ on the right hand side that is a random value (since it depends on our estimated dyadic tree $\hat{T}$). The proof is similar to the previous, and indeed uses the bound on the absolute difference between the true and empirical risk of an estimate.
+with probability at least $1 - \delta$. This result is similar to the
+previous, but differs in one important aspect. Note that there is a
+term $\phi_n(\hat{T})$ on the right hand side that is a random value
+(since it depends on our estimated dyadic tree $\hat{T}$). The proof
+is similar to the previous, and indeed uses the bound on the absolute
+difference between the true and empirical risk of an estimate.
 
 \subsection{Consistency of the Estimated Partition}
 
-The final result relies on a strong assumption that the model is correct. That is, that the conditional distribution of $Y$ given $X$ is truly
+The final result relies on a strong assumption that the model is
+correct. That is, that the conditional distribution of $Y$ given $X$
+is truly
 
 \begin{align}
     Y | X = x \sim N_p(\mu^*_T(x), \Omega_T^*(x))
 \end{align}
 
-This is a rather strong assumption, but, if it holds, we can define the following notion of consistency. \cite{liu2010} define a tree estimation procedure $\hat{T}$ to be \textit{tree partition consistent} if
+This is a rather strong assumption, but, if it holds, we can define
+the following notion of consistency. \cite{liu2010} define a tree
+estimation procedure $\hat{T}$ to be \textit{tree partition
+  consistent} if
 
 \begin{align}
     P \left(
@@ -219,11 +376,22 @@ This is a rather strong assumption, but, if it holds, we can define the followin
     \text{ as } n \to \infty
 \end{align}
 
-where we say that a partition $\Pi(T_2) \subset \Pi(T_1)$ if $T_1$ can be obtained by further splitting the rectangles at the leaves of $T_2$ (that is if $T_1$ is induces a finer partition of the space than $T_2$). The final result of the paper claims that both the penalized empirical risk and held-out risk estimators are tree partition consistent. We have not had time to go over this result in detail, but will provide additional details about the proof in future work. 
+where we say that a partition $\Pi(T_2) \subset \Pi(T_1)$ if $T_1$ can
+be obtained by further splitting the rectangles at the leaves of $T_2$
+(that is if $T_1$ is induces a finer partition of the space than
+$T_2$). The final result of the paper claims that both the penalized
+empirical risk and held-out risk estimators are tree partition
+consistent. We have not had time to go over this result in detail, but
+will provide additional details about the proof in future work.
 
 \section{Conclusion and Future Work}
 
-So far we have become familiar with the graphical lasso presented in \cite{friedman2008}. We have also read \cite{liu2009}, working in particular to understand the Go-CART method and the assumptions it makes about the data and the model space. We have started to work on understanding the theoretical results and the techniques used in the proofs. In the coming weeks we plan to do the following
+So far we have become familiar with the graphical lasso presented in
+\cite{friedman2008}. We have also read \cite{liu2009}, working in
+particular to understand the Go-CART method and the assumptions it
+makes about the data and the model space. We have started to work on
+understanding the theoretical results and the techniques used in the
+proofs. In the coming weeks we plan to do the following
 
 \begin{itemize}
 \item Better understand the theoretical results presented in \cite{liu2010}
