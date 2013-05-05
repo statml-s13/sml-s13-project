@@ -1,0 +1,90 @@
+\subsection{Results for Penalized Empirical Risk Estimator}
+
+Formally, Theorem $4.1$ states the following. Let $T \in
+\mathcal{T}_N$ be a dyadic partitioning tree with depth at most $K$
+where $K$ is some positive integer and $N = 2^K$. Let $\Pi(T) =
+\{\mathcal{X}_1, \ldots, \mathcal{X}_{m_T}\}$ be the partition of
+$\mathcal{X}$ induced by $T$. Finally, let $\hat{T},
+\hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}$ be the estimator obtained
+using the penalized empirical risk minimization Go-CART, with the
+following penalty term
+
+\begin{align}
+  pen(T) = (C_1 + 1) L_n m_T \sqrt{\frac{[[T]] \log 2 + 2 \log p = \log(48/\delta)}{n}}
+\end{align}
+
+where $C_1 = 8 \sqrt{v_2} + 8 B \sqrt{v_1} + B^2$. Then Theorem $4.1$
+shows that for any $\delta \in (0, 1)$ and for sufficiently large $n$
+the following bound on the excess risk of the estimator holds with
+probability at least $1-\delta$
+
+\begin{align}
+  R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) - R^*
+  \le \inf_{T \in \mathcal{T}_N} \left\{
+    2 pen(T) + \inf_{\mu_{\mathcal{X}_j} \in M_j, \Omega_{\mathcal{X}_j} \in \Lambda_j}
+    (R(T, \mu_T, \Omega_T) - R*)
+  \right\}
+\end{align}
+
+We know discuss the proof of this result. We begin with a high-level
+sketch that we will then use to guide a discussion of the specific
+techniques that are used.
+
+\textbf{Proof Sketch:} We will first establish a uniform bound over
+all $T \in \mathcal{T}_N, \mu_{\mathcal{X}}, \Omega_{\mathcal{X}}$ on
+the absolute value of the difference between the empirical and true
+risk of $T, \mu_{\mathcal{X}}, \Omega_{\mathcal{X}}$. This gives us
+the following bound that holds with probability at least $1 -
+\delta/2$.
+
+\begin{align}
+  \sup_{T \in \mathcal{T}_N, \mu_j \in M_j, \Omega_j \in \Lambda_j}
+  \left|
+    R(T, \mu_T, \Omega_T) - \hat{R}(T, \mu_T, \Omega_T)
+  \right| \le pen(T)
+\end{align}
+
+where
+
+\begin{align}
+  pen(T) = (C_1 + 1) L_n m_T \sqrt{\frac{[[T]] \log 2 + 2 \log p + \log(48/\delta)}{n}}
+\end{align}
+
+With this bound, the authors then define the following parameters for
+any DPT $T$
+
+\begin{align}
+  \mu_T^0, \Omega_T^0 &= \arg\min_{\mu_T \in M_j, \Omega_T \in \Lambda_j} R(T, \mu_T, \Omega_T)
+\end{align}
+
+In words, $\mu_T^0$ and $\Omega_T^0$ are the optimal Gaussian
+parameters within the partitions induced by the tree $T$ constrained
+to lie in the set $M_j$ and $\Lambda_j$ for $1 \le j \le m_T$. Given
+the uniform bound and this definition, the primary result follows from
+the following string of inequalities with probability $1-\delta$ for
+$\delta \in (0, 1)$
+
+\begin{align}
+  &R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) & \\
+  &\le \hat{R}(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) + pen(\hat{T}) & \text{w. prob } (1 - \delta/2) \\
+  &= \inf_{T \in \mathcal{T}_N, \mu_{\mathcal{X}_j} \in M_j, \Omega_{\mathcal{X}_j} \in \Lambda_j}
+  \left\{
+    \hat{R}(T, \mu_T, \Omega_t) + pen(T)
+  \right\} & \text{by def. of pen. risk est.} \\
+  &\le \inf_{T \in \mathcal{T}_N}
+  \left\{
+    \hat{R}(T, \mu_T^0, \Omega_T^0) + pen(T)
+  \right\} & \mu_T^0, \Omega_T^0 \text{ min. true risk not emp. risk} \\
+  &\le \inf_{T \in \mathcal{T}_N}
+  \left\{
+    R(T, \mu_T^0, \Omega_T^0) + 2pen(T)
+  \right\} & \text{w. prob } (1 - \delta/2) \\
+  &= \inf_{T \in \mathcal{T}_N}
+  \left\{
+    \inf_{\mu_{\mathcal{X}_j} \in M_j, \Omega_{\mathcal{X}_j} \in \Lambda_j}
+    R(T, \mu_T, \Omega_T) + 2pen(T)
+  \right\} & \text{by def. of } \mu_T^0, \Omega_T^0
+\end{align}
+
+The result is obtained by subtracting the oracle $R^*$ from both
+sides.

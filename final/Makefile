@@ -1,7 +1,7 @@
 SHELL = /bin/bash
 
 MAINDOC = main
-TEXFILES = main.tex
+TEXFILES = main.tex thm41.tex
 
 main.pdf: $(TEXFILES)
 	pdflatex $<

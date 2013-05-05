@@ -264,125 +264,97 @@ over all DPTs $T \in \mathcal{T}_N$ such that $\sum_{T\in
 
 \section{Statistical Analysis of Go-CART}
 
-There are three theoretical results in the Go-CART paper. Two of them
-bound the excess risk of the two different estimators (penalized
-empirical risk and held-out risk), and the third one provides a
-consistency result using a definition of consistency that can be
-applied to dyadic tree-based partitions. We summarize the theorems and
-sketch the proofs supplied in the appendix of \cite{liu2010}.
+One of the main theoretical results in this paper is a probabilistic
+bound on the excess risk of the estimators obtained from both the
+penalized empirical risk and the hold-out empirical risk. We refer to
+these two bounds as Theorem $4.1$ and Theorem $4.2$ respectively, and
+focus primarily on the proof techniques used in Theorem $4.2$ since
+the proof for Theorem $4.2$ is similar, and uses many of the same
+methods. The second theoretical result is a consistency result on the
+estimators, showing that under the assumption that the model is
+correct, the Go-CART algorithm consistently estimates the correct
+partition of the input space $\mathcal{X}$.
 
-\subsection{Bounds for Penalized Empirical Risk}
-
-This result gives a bound on the excess of the penalized empirical
-risk estimator. Formally, the result states that with a penalty term
-$pen(T)$
-
-\begin{align}
-    pen(T) = (C_1 + 1) L_n m_T
-    \sqrt{
-        \frac{[[T]] \log 2 + 2 \log p + \log(48/\delta)}
-        {n}
-    }
-\end{align}
-
-where $C_1$ is a penalty term involving constants formally defined in
-Assumptions 4.1 and 4.2 in \cite{liu2010}, the excess risk inequality
-for sufficiently large $n$
+Before discussing the theorems, we first define some notation, and
+list two assumptions that are key to the results. First, define the
+oracle risk $R^*$ over $\mathcal{T}_N$ as
 
 \begin{align}
-    R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) - R^*
-    \le \underset{T \in \mathcal{T}_N}{\inf} \left\{
-        2 pen(T)
-        + \underset{\mu_{\mathcal{X}_j} \in M_j,\Omega_{\mathcal{X}_j} \in \Lambda_j}{\inf}
-        (R(T, \mu_T, \Omega_T) - R*)
-    \right\}
+  R^* = R(T^*, \mu_T^*, \Omega_T^*)
+  = \inf_{T \in \mathcal{T}_N, \mu_{\mathcal{X}_j} \in M_j, \Omega_{\mathcal{X}_j} \in \Lambda_j}
+  R(T, \mu_T, \Omega_T)
 \end{align}
 
-holds with probability at least $1 - \delta$. Intuitively, this result
-states that the difference between the true risk of the estimate
-obtained by minimizing the penalized empirical risk and the oracle
-risk $R^*$ is bounded by a term that depends on the tree $T \in
-\mathcal{T}_N$ that simultaneously minimizes the excess risk and twice
-the penalization parameter defined above. This means that we can bound
-with high probability the excess risk of our estimate using $2 pen(T)$
-(which we don't know specifically).
-
-The proof of this result uses a series of concentration of measure
-inequalities to prove the bound. Roughly, the authors first bound the
-absolute difference between the true risk of any estimate and its
-empirical risk. They first upper bound this risk using a sum of two
-summations over all partitions induced by the estimated tree $T$. They
-bound one of these terms using Hoeffding's, and then construct a
-uniform bound over the set of all trees using union bound (since we
-have defined a priori that we only consider trees of depth $K$, which
-is a finite set). The second term is bounded using Bernstein's
-inequality, and also relies on a number of key assumptions (namely
-Assumption 4.1 and 4.2 in \cite{liu2010}). These bounds are then used
-to construct a penalty term $pen(T)$ that leads to the result.
-
-\subsection{Bounds for Held-Out Risk}
-
-The bound on the excess risk of the held-out estimator depends on a
-function $\phi_n(T)$ of $n$ and $T$ defined to be
+Additionally, the authors make the following two
+assumptions. \textbf{Assumption 4.1} places a bound on the
+partition-specific parameters of the model. In particular
 
 \begin{align}
-    \phi_n(T) = (C_2 + \sqrt{2}) L_n m_T
-    \sqrt{
-        \frac{[[T]] \log 2 + 2 \log p + \log(384/\delta)}{n}
-    }
+  \max_{1\le j\le m_T} \|\mu_{\mathcal{X}_j}\|_\infty \le B
 \end{align}
 
-Once the data $\mathcal{D}$ has been partitioned into two data sets
-$\mathcal{D}_1$ and $\mathcal{D}_2$, the estimator constructed using
-the held-out risk criterion described above has an excess risk that is
-bound by
+and
 
 \begin{align}
-    R(\hat{T}, \hat{\mu}_{\hat{T}}, \hat{\Omega}_{\hat{T}}) - R^*
-    \le \underset{T \in \mathcal{T}_N}{\inf}
-    \left\{
-        3 \phi_n(T) +
-        \underset{\mu_{\mathcal{X}_j} \in M_j, \Omega_{\mathcal{X}_j} \in \Lambda_j}{\inf}
-        (R(T, \mu_T, \Omega_T) - R^*)
-    \right\} + \phi_n (\hat{T})
+  &\max_{1 \le j \le M_T} \sup_{\Omega \in \Lambda_j} \log |\Omega| \le L_n \\
+  &\Lambda_j = \{\Omega \in \mathbb{R}^{p \times p} :
+  \Omega \text{ is positive semidefinite, symmetric and } \|\Omega\|_1 \le L_{j,n}
+  \}
 \end{align}
 
-with probability at least $1 - \delta$. This result is similar to the
-previous, but differs in one important aspect. Note that there is a
-term $\phi_n(\hat{T})$ on the right hand side that is a random value
-(since it depends on our estimated dyadic tree $\hat{T}$). The proof
-is similar to the previous, and indeed uses the bound on the absolute
-difference between the true and empirical risk of an estimate.
-
-\subsection{Consistency of the Estimated Partition}
-
-The final result relies on a strong assumption that the model is
-correct. That is, that the conditional distribution of $Y$ given $X$
-is truly
+\textbf{Assumption 4.2} bounds the expected difference between two
+quantities and their expectations. Let $Y = (Y_1, \ldots, Y_p)^T \in
+\mathbb{R}^p$. For any $\mathcal{A} \subset \mathcal{X}$, define the
+following quantities
 
 \begin{align}
-    Y | X = x \sim N_p(\mu^*_T(x), \Omega_T^*(x))
+  Z_{k\ell}(\mathcal{A}) &=
+  Y_k Y_\ell \mathbb{E}(X \in \mathcal{A}) - \mathbb{E}(Y_k Y_\ell \mathbb{I}(X \in \mathcal{A})) \\
+  Z_{j}(\mathcal{A}) &=
+  Y_j \mathbb{E}(X \in \mathcal{A}) - \mathbb{E}(Y_j \mathbb{E}(X \in \mathcal{A})
 \end{align}
 
-This is a rather strong assumption, but, if it holds, we can define
-the following notion of consistency. \cite{liu2010} define a tree
-estimation procedure $\hat{T}$ to be \textit{tree partition
-  consistent} if
+The authors assume that there exist constants $M_1, M_2, v_1,$ and
+$v_2$ such that
 
 \begin{align}
-    P \left(
-        \Pi(T^*) \subset \Pi(\hat{T})
-    \right) \to 1
-    \text{ as } n \to \infty
+  \sup_{k,\ell, A} \mathbb{E} | Z_{k\ell}(\mathcal{A}|^m &\le \frac{m! M_2^{m-2} v_2}{2} \\
+  \sup_{j, A} \mathbb{E} | Z_j(\mathcal{A}) |^m &\le \frac{m! M_1^{m-1} v_1}{2}
 \end{align}
 
-where we say that a partition $\Pi(T_2) \subset \Pi(T_1)$ if $T_1$ can
-be obtained by further splitting the rectangles at the leaves of $T_2$
-(that is if $T_1$ is induces a finer partition of the space than
-$T_2$). The final result of the paper claims that both the penalized
-empirical risk and held-out risk estimators are tree partition
-consistent. We have not had time to go over this result in detail, but
-will provide additional details about the proof in future work.
+\input{thm41}
+
+%\input{thm43}
+
+% \subsection{Consistency of the Estimated Partition}
+
+% The final result relies on a strong assumption that the model is
+% correct. That is, that the conditional distribution of $Y$ given $X$
+% is truly
+
+% \begin{align}
+%     Y | X = x \sim N_p(\mu^*_T(x), \Omega_T^*(x))
+% \end{align}
+
+% This is a rather strong assumption, but, if it holds, we can define
+% the following notion of consistency. \cite{liu2010} define a tree
+% estimation procedure $\hat{T}$ to be \textit{tree partition
+%   consistent} if
+
+% \begin{align}
+%     P \left(
+%         \Pi(T^*) \subset \Pi(\hat{T})
+%     \right) \to 1
+%     \text{ as } n \to \infty
+% \end{align}
+
+% where we say that a partition $\Pi(T_2) \subset \Pi(T_1)$ if $T_1$ can
+% be obtained by further splitting the rectangles at the leaves of $T_2$
+% (that is if $T_1$ is induces a finer partition of the space than
+% $T_2$). The final result of the paper claims that both the penalized
+% empirical risk and held-out risk estimators are tree partition
+% consistent. We have not had time to go over this result in detail, but
+% will provide additional details about the proof in future work.
 
 \section{Conclusion and Future Work}
 
