@@ -5,6 +5,8 @@
 \usepackage{enumerate}
 \usepackage{fullpage}
 
+\nipsfinalcopy
+
 \title{10-702: Midway Report\\
 Graph-valued Regression}
 \author{Willie Neiswanger\\
@@ -268,7 +270,7 @@ One of the main theoretical results in this paper is a probabilistic
 bound on the excess risk of the estimators obtained from both the
 penalized empirical risk and the hold-out empirical risk. We refer to
 these two bounds as Theorem $4.1$ and Theorem $4.2$ respectively, and
-focus primarily on the proof techniques used in Theorem $4.2$ since
+focus primarily on the proof techniques used in Theorem $4.1$ since
 the proof for Theorem $4.2$ is similar, and uses many of the same
 methods. The second theoretical result is a consistency result on the
 estimators, showing that under the assumption that the model is
@@ -286,7 +288,9 @@ oracle risk $R^*$ over $\mathcal{T}_N$ as
 \end{align}
 
 Additionally, the authors make the following two
-assumptions. \textbf{Assumption 4.1} places a bound on the
+assumptions.
+
+\textbf{Assumption 4.1} places a bound on the
 partition-specific parameters of the model. In particular
 
 \begin{align}
@@ -356,58 +360,17 @@ $v_2$ such that
 % consistent. We have not had time to go over this result in detail, but
 % will provide additional details about the proof in future work.
 
-\section{Conclusion and Future Work}
+\section{Conclusion}
 
-So far we have become familiar with the graphical lasso presented in
-\cite{friedman2008}. We have also read \cite{liu2009}, working in
-particular to understand the Go-CART method and the assumptions it
-makes about the data and the model space. We have started to work on
-understanding the theoretical results and the techniques used in the
-proofs. In the coming weeks we plan to do the following
-
-\begin{itemize}
-\item Better understand the theoretical results presented in \cite{liu2010}
-\item Read about the normality assumption relaxation in \cite{liu2009}
-\item Read the analysis of graph-valued regression in a single dimension (time) in \cite{zhou2010}
-\end{itemize}
-
-%\section{Description}
-%\label{sec:description}
-%
-%We will study methods in statistics and machine learning that focus on
-%regression in the space of graphs. The graphical lasso
-%\cite{friedman2008} estimates the precision (inverse covariance)
-%matrix of a random vector $\boldsymbol{Y}$ assumed to be drawn from a
-%multivariate Gaussian. The paper \cite{liu2009} relaxes this
-%assumption.
-%
-%Graph-valued regression is the problem of estimating the inverse
-%covariance matrix of a random vector $\boldsymbol{Y}$ conditioned on
-%another random vector $\boldsymbol{X}$. \cite{liu2010} describes and
-%analyzes an approach to this problem that estimates precision matrices
-%within partitions of $\boldsymbol{\mathcal{X}}$ that are induced using
-%a variant of classification and regression trees. This method also
-%relies on a Gaussian assumption: $\boldsymbol{Y} | \boldsymbol{X} \sim
-%\mathcal{N}(\mu(x), \Sigma(x))$. We would like to explore ways in
-%which the non-paranormal relaxation can be applied to graph-valued
-%regression.
-%
-%\section{Scope}
-%\label{sec:scope}
-%
-%At minimum, we plan to read the following papers:
-%
-%\begin{enumerate}[1.]
-%\item Graph-valued Regression \cite{liu2010}
-%\item The Non-paranormal: Semiparametric Estimation of High Dimensional Undirected Graphs \cite{liu2009}
-%\item Sparse Inverse Covariance Estimation with the Graphical Lasso \cite{friedman2008}
-%\item Model Selection in Gaussian Graphical Models: High-dimensional Consistency of $\ell_1$ Regularized MLE \cite{ravikumar2008}
-%\item Sparse Permutation Invariant Covariance Estimation \cite{rothman2008}
-%\item Time-varying Undirected Graphs \cite{zhou2010}
-%\end{enumerate}
-%
-%If possible, we would like to explore the theory for a relaxation of
-%the Gaussian assumption used in \cite{liu2010}.
+We have reviewed the Go-CART algorithm presented in \cite{liu2010},
+which builds off of results from \cite{friedman2008}. We discussed the
+partition based algorithm, and its theoretical
+properties. Specifically, we reviewed the techniques used in the proof
+of a result that bounds the excess risk of the dyadic partitioning
+tree-based graph estimator. We also reviewed the consistency proof,
+which shows that, under the assumption that the DPT model is correct,
+the Go-CART algorithm will consistently estimate the true partition of
+the space $\mathcal{X}$.
 
 \bibliographystyle{plain}
 \bibliography{main}

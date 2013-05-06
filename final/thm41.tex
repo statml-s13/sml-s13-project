@@ -26,7 +26,7 @@ probability at least $1-\delta$
   \right\}
 \end{align}
 
-We know discuss the proof of this result. We begin with a high-level
+We now discuss the proof of this result. We begin with a high-level
 sketch that we will then use to guide a discussion of the specific
 techniques that are used.
 
@@ -86,5 +86,114 @@ $\delta \in (0, 1)$
   \right\} & \text{by def. of } \mu_T^0, \Omega_T^0
 \end{align}
 
-The result is obtained by subtracting the oracle $R^*$ from both
-sides.
+The result is obtained by subtracting the oracle risk $R^*$ from both
+sides. We now fill in the details of the proof, starting with the
+bound on the absolute value of the difference between the empirical
+and true risk for any DPT $T$. First, define
+
+\begin{align}
+  S_{j,n} &= \frac{1}{n} \sum_{i=1}^n (y_i - \mu_{\mathcal{X}_j}) (y_i - \mu_{\mathcal{X}_j})^T \mathbb{I}(x_i \in \mathcal{X}_j) \\
+  \bar{S}_j &= \mathbb{E} (Y - \mu_{\mathcal{X}_j}) (Y - \mu_{\mathcal{X}_j})^T \mathbb{I}(X \in \mathcal{X}_j)
+\end{align}
+
+Using the definition of $R$ above, we can upper bound their difference
+
+\begin{align}
+  &\left| R(T,\mu_T,\Omega_T) - \hat{R}(T, \mu_T, \Omega_T) \right| \\
+  &\le \left| \sum_{j=1}^m tr[\Omega_{\mathcal{X}_j} (S_{j,n} - \hat{S}_j) \right| + 
+  \left|
+    \sum_{j=1}^m \log|\Omega_{\mathcal{X}_j}|
+    \left[
+      \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - \mathbb{E I} (X \in \mathcal{X}_j)
+    \right]
+  \right| \\
+  &\le \left| \sum_{j=1}^m \|\Omega_{\mathcal{X}_j}\|_1 \|S_{j,n} - \hat{S}_j\|_\infty \right| + 
+  \sum_{j=1}^m \left| \log|\Omega_{\mathcal{X}_j}| \right|
+  \left|
+    \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - \mathbb{E I} (X \in \mathcal{X}_j)
+  \right|
+\end{align}
+
+The first inequality follows from the triangle inequality. The second
+inequality follows from the following reasoning. First, we can upper
+bound the trace of $\Omega_{\mathcal{X}_j} (S_{j,n} - \bar{S}_j)$ by
+noting that the trace will be a sum of the diagonal of inner product
+of the two matrices. This can be upper bounded by multiplying the
+absolute value of each entry in $\Omega_{\mathcal{X}_j}$ by the max
+entry in $S_{j,n} - \bar{S}_j$ and summing, which is equivalent to
+$\|\Omega_{\mathcal{X}_j}\|_1 \|S_{j,n} - \bar{S}_j\|_\infty$. We can
+upper bound the second part of the expression using the Cauchy-Schwarz
+inequality.
+
+Upper bounding the difference between the empirical and true risk with
+the sum of these two terms allows us to bound each individually. We
+will first bound the second expression, which we can bound uniformly
+using an interesting property of the prefix codes $[[T]]$ introduced
+above. Using Hoeffding's inequality, we have the following simple
+bound
+
+\begin{align}
+  \mathbb{E} \left(
+    \left| \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - 
+      \mathbb{E}(X \in \mathcal{X}_j \right| > \epsilon
+  \right)
+  \le 2 \exp \left\{ - 2 n \epsilon^2 \right\}
+\end{align}
+
+Now, we can achieve a uniform bound in the following way. Let
+$\delta_T \in (0,1)$ be a function of $T$, then from the inquality
+above we know that with probability at most $\delta_T$
+
+\begin{align}
+    \left| \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - 
+      \mathbb{E}(X \in \mathcal{X}_j
+    \right|
+    > \sqrt{\frac{\log(2/\delta_T)}{2n}}
+\end{align}
+
+Now, let $\delta_T = \delta 2^{-[[T]]}$ for each $T \in
+\mathcal{T}_N$, and define $\epsilon_T =
+\sqrt{\frac{\log(2/\delta_T)}{2n}}$, then
+
+\begin{align}
+  &\mathbb{P} \left(
+    \sup_{T \in \mathcal{T}_N}
+    \left|
+      \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - \mathbb{E}(X \in \mathcal{X}_j)
+    \right| / \epsilon_T
+    > 1
+  \right) \\
+  &= \mathbb{P} \left(
+    \exists T \in \mathcal{T}_N
+    \left|
+      \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - \mathbb{E}(X \in \mathcal{X}_j)
+    \right|
+    > \epsilon_T
+  \right) \\
+  &\le 2 \sum_{T \in \mathcal{T}_N} \delta_T \\
+  &= 2 \sum_{T \in \mathcal{T}_N} \delta 2^{-[[T]]}
+  = 2 \delta \sum_{T \in \mathcal{T}_N} 2^{-[[T]]}
+  \le 2 \delta
+\end{align}
+
+Prefix codes $[[T]]$ are defined such that $\sum_{T \in \mathcal{T}_N}
+2^{-[[T]]} \le 1$, giving us the final bound above. Therefore, we have
+with probability at least $1 - \delta$ that
+
+\begin{align}
+  \forall T \in \mathcal{T}_N
+  \left|
+    \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - \mathbb{E}(X \in \mathcal{X}_j)
+  \right|
+  \le \sqrt{\frac{[[T]] \log 2 + \log(2/\delta)}{2n}}
+\end{align}
+
+The result follows by noting that under \textbf{Assumption 4.1}
+$\max_{1\le j\le m_T} \log|\Omega_{\mathcal{X}_j}| \le L_n$. In the
+interest of space, we do not go into detail about the bound on
+$\sum_{j=1}^m \|\Omega_{\mathcal{X}_j}\|_1 \|S_{j,n} -
+\bar{S}_j\|_\infty$. The technique involves expanding $S_{j,n}$ and
+$\bar{S}_j$ and grouping true expectations with their empirical
+estimates. We can then use a union bound together with Bernstein's and
+Hoeffding's inequality to bound the terms in the sum that we created
+using the union bound.
