@@ -50,8 +50,8 @@ where
   pen(T) = (C_1 + 1) L_n m_T \sqrt{\frac{[[T]] \log 2 + 2 \log p + \log(48/\delta)}{n}}
 \end{align}
 
-With this bound, the authors then define the following parameters for
-any DPT $T$
+With this bound, the authors then define the following choice of
+parameters for any DPT $T$
 
 \begin{align}
   \mu_T^0, \Omega_T^0 &= \arg\min_{\mu_T \in M_j, \Omega_T \in \Lambda_j} R(T, \mu_T, \Omega_T)
@@ -107,7 +107,7 @@ Using the definition of $R$ above, we can upper bound their difference
       \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - \mathbb{E I} (X \in \mathcal{X}_j)
     \right]
   \right| \\
-  &\le \left| \sum_{j=1}^m \|\Omega_{\mathcal{X}_j}\|_1 \|S_{j,n} - \hat{S}_j\|_\infty \right| + 
+  &\le \sum_{j=1}^m \|\Omega_{\mathcal{X}_j}\|_1 \|S_{j,n} - \hat{S}_j\|_\infty + 
   \sum_{j=1}^m \left| \log|\Omega_{\mathcal{X}_j}| \right|
   \left|
     \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - \mathbb{E I} (X \in \mathcal{X}_j)
@@ -146,7 +146,7 @@ above we know that with probability at most $\delta_T$
 
 \begin{align}
     \left| \frac{1}{n} \sum_{i=1}^n \mathbb{I}(x_i \in \mathcal{X}_j) - 
-      \mathbb{E}(X \in \mathcal{X}_j
+      \mathbb{E}(X \in \mathcal{X}_j)
     \right|
     > \sqrt{\frac{\log(2/\delta_T)}{2n}}
 \end{align}
