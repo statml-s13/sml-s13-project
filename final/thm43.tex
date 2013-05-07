@@ -1,3 +1,5 @@
+\subsection{Tree Partition Consistency of Go-CART}
+
 \textbf{Assumption 4.4} specifies that for adjacent regions of the true dyadic partition, either the means or the variances should be sufficiently different. Without this assumption it might be impossible to detect the boundaries of the true partition. More specifically, if $\mathcal{X}_i^0$ and $\mathcal{X}_j^0$ are adjacent partition elements of the true tree $T^*$, then we assume there exists positive constants $c_1$, $c_2$, $c_3$, and $c_4$, such that either
 \begin{align}
     2 \log \left| \frac{\Sigma_{\mathcal{X}_i^0}^* + \Sigma_{\mathcal{X}_j^0}^*}{2}  \right| - \log \left| \Sigma_{\mathcal{X}_i^0}^*  \right| - \log \left| \Sigma_{\mathcal{X}_i^0}^*  \right| \geq c_4
@@ -5,9 +7,7 @@
 or $\| \mu_{\mathcal{X}_i^0}^* - \mu_{\mathcal{X}_j^0}^* \|_2^2 \geq c_3$. Additionally, for the variances, the assumption is that the smallest eigenvalue of $\Omega_{\mathcal{X}_j^0}^*$ is s.t. $\rho_{\text{min}}(\Omega_{\mathcal{X}_j^0}^*) \geq c_1$ for all $j=1,\ldots,m_T^*$. The final assumption is that for each $T \in \mathcal{T}_N$ and each $\mathcal{A} \in \Pi(T)$, $\mathbb{P}(X\in \mathcal{A}) \geq c_2$.
 
 
-\subsection{Tree Partition Consistency of Go-CART}
-
-Formally, Theorem $4.3$ states that under the previous assumptions, 
+Formally, \textbf{Theorem $4.3$} states that under the previous assumptions, 
 \begin{align}
     \inf_{T \in \mathcal{T}_N, \Pi(T^*) \nsubseteq \Pi(T)}
     \inf_{\mu_T, \Omega_T \in \mathcal{M}_T }
@@ -22,4 +22,43 @@ where $\Pi(T^*) \subset \Pi(\hat{T})$ if tree $\Pi(\hat{T})$ can be obtained by 
 
 \textbf{Proof Sketch:} For all $T \in \mathcal{T}_N$, $\Pi(T^*) \nsubseteq \Pi(T)$, there exists an $\mathcal{X}' \in \Pi(T)$ s.t. no $\mathcal{A} \in \Pi(T^*)$ contains $\mathcal{X}'$. Hence, there exists a minimal class of disjoint regions $\{ \mathcal{X}_1^0,\ldots,\mathcal{X}_{k'}^0 \} \in \Pi(T^*)$ s.t. $\mathcal{X}' \subset \cup_{i=1}^{k'} \mathcal{X}_i^0$, where $k' \geq 2$. We also can see that $\mathcal{X}' = \cup_{i=1}^{k'} \mathcal{X}_i^*$, where $\mathcal{X}_i^* = \mathcal{X}_i^0 \cap \mathcal{X}'$ (for $i=1,\ldots,k'$).
 
+Define the true parameters on the regions $\mathcal{X}_1^0,\ldots,\mathcal{X}_{k'}^0$ to be $\{ \mu_{\mathcal{X}_j^*}^*, \Omega_{\mathcal{X}_j^*}^* \}_{j=1}^{k'}$. We denote the risk of $\mu_{T^*}^*$ and $\Omega_{T^*}^*$ on the region $\mathcal{X}'$ as $R(\mathcal{X}',\mu_{T^*}^*,\Omega_{T^*}^*)$, where we can obtain
+\begin{align}
+    R(\mathcal{X}',\mu_{T^*}^*,\Omega_{T^*}^*) 
+    = \sum_{j=1}^{k'} 
+    \mathbb{P}(X \in \mathcal{X}_j^*) \left[ \text{tr}(\Omega_T (\Omega_j^*)^{-1}) + \text{tr}(\Omega_T( \mu_{\mathcal{X}_j^*}^* - \mu_T )( \mu_{\mathcal{X}_j^*}^* - \mu_T )^T ) \right]
+    - \mathbb{P}(X \in \mathcal{X}') \log | \Omega_T |
+\end{align}
+Using the bound $R(\mathcal{X}',\mu_T,\Omega_T) \geq \max\{ R(\mathcal{X}',\mu_{T^*}^*,\Omega_T), R(\mathcal{X}',\mu_T,\Omega_{T^*}^*) \}$, and proceeding by cases, we have that
 
+\textbf{Case 1:} the $\mu$'s are different, in which case
+\begin{align}
+    \inf_{\mu_T, \Omega_T \in \mathcal{M}_T } R(\mathcal{X}',\mu_T,\Omega_T) - R(\mathcal{X}',\mu_{T^*}^*,\Omega_{T^*}^*) 
+    \geq c_1 c_2 \inf_{\mu_T} \sum_{j=1}^{k'} \| \mu_{\mathcal{X}_j^*}^* - \mu_T \|_2^2
+\end{align}
+where the inequality uses the fact that $\rho_{\text{min}}(\Omega_{\mathcal{X}_j^*}^*) \geq c_1$ and $\mathbb{P}(X \in \mathcal{X}_j^*) \geq c_2$. A lower bound for the final term in this expression is achieved at $\bar{\mu}_T = \frac{1}{k'} \sum_{j=1}^{k'} \mu_{\mathcal{X}_j^*}^*$. Also, note that w.l.o.g we can assume $k'=2$ and show that
+\begin{align}
+    \sum_{j=1}^2 \| \mu_{\mathcal{X}_j^*}^* - \bar{\mu}_T \|_2^2 = \frac{1}{2} \| \mu_{\mathcal{X}_1^*} - \mu_{\mathcal{X}_2^*} \|_2^2 \geq \frac{c_3}{2}
+\end{align}
+and hence that
+\begin{align}
+    \inf_{\mu_T, \Omega_T \in \mathcal{M}_T } R(\mathcal{X}',\mu_T,\Omega_T) - R(\mathcal{X}',\mu_{T^*}^*,\Omega_{T^*}^*)
+    \geq \frac{c_1 c_2 c_3}{2}
+\end{align}
+
+
+\textbf{Case 2:} the $\Omega$'s are different, in which case we have
+\begin{align}
+    \inf_{\mu_T, \Omega_T \in \mathcal{M}_T } R(\mathcal{X}',\mu_T,\Omega_T) - R(\mathcal{X}',\mu_{T^*}^*,\Omega_{T^*}^*) 
+    \geq
+    c_2 \inf_{\Sigma_T} \sum_{j=1}^{k'} \left( \text{tr}\left( \Sigma_{X_j^*}^* \Sigma_T^{-1} \right) + \log \frac{|\Sigma_T|}{|\Sigma_{X_j^*}^*|} - p \right)
+\end{align}
+where $\Sigma_T = \Omega_T^{-1}$. We achieve a lower bound using $\bar{\Sigma}_T = \frac{1}{2} \left( \Sigma_{\mathcal{X}_1^*} + \Sigma_{\mathcal{X}_2^*} \right)$, and plugging this into the previous expression (after assuming $k'=2$ w.l.o.g as before) gives
+\begin{equation}
+    \inf_{\Sigma_T} \sum_{j=1}^{2} \left( \text{tr}\left( \Sigma_{X_j^*}^* \Sigma_T^{-1} \right) + \log \frac{|\Sigma_T|}{|\Sigma_{X_j^*}^*|} - p \right)
+     \geq c_4.
+\end{equation}
+The two statements taken together imply that 
+\begin{align}
+    \inf_{\mu_T, \Omega_T \in \mathcal{M}_T } R(\mathcal{X}',\mu_T,\Omega_T) - R(\mathcal{X}',\mu_{T^*}^*,\Omega_{T^*}^*) \geq c_2 c_4
+\end{align}
