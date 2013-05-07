@@ -1,0 +1,25 @@
+\textbf{Assumption 4.4} specifies that for adjacent regions of the true dyadic partition, either the means or the variances should be sufficiently different. Without this assumption it might be impossible to detect the boundaries of the true partition. More specifically, if $\mathcal{X}_i^0$ and $\mathcal{X}_j^0$ are adjacent partition elements of the true tree $T^*$, then we assume there exists positive constants $c_1$, $c_2$, $c_3$, and $c_4$, such that either
+\begin{align}
+    2 \log \left| \frac{\Sigma_{\mathcal{X}_i^0}^* + \Sigma_{\mathcal{X}_j^0}^*}{2}  \right| - \log \left| \Sigma_{\mathcal{X}_i^0}^*  \right| - \log \left| \Sigma_{\mathcal{X}_i^0}^*  \right| \geq c_4
+\end{align}
+or $\| \mu_{\mathcal{X}_i^0}^* - \mu_{\mathcal{X}_j^0}^* \|_2^2 \geq c_3$. Additionally, for the variances, the assumption is that the smallest eigenvalue of $\Omega_{\mathcal{X}_j^0}^*$ is s.t. $\rho_{\text{min}}(\Omega_{\mathcal{X}_j^0}^*) \geq c_1$ for all $j=1,\ldots,m_T^*$. The final assumption is that for each $T \in \mathcal{T}_N$ and each $\mathcal{A} \in \Pi(T)$, $\mathbb{P}(X\in \mathcal{A}) \geq c_2$.
+
+
+\subsection{Tree Partition Consistency of Go-CART}
+
+Formally, Theorem $4.3$ states that under the previous assumptions, 
+\begin{align}
+    \inf_{T \in \mathcal{T}_N, \Pi(T^*) \nsubseteq \Pi(T)}
+    \inf_{\mu_T, \Omega_T \in \mathcal{M}_T }
+    R(T,\mu_T,\Omega_T) - R(T^*,\mu_T^*,\Omega_{T^*}^*) > \min \left\{ \frac{c_1 c_2 c_3}{2}, c_2 c_4  \right\}
+\end{align}
+where $c_1$, $c_2$, $c_3$, and $c_4$ are given in Assumption $4.4$. Furthermore, the Go-CART estimated with both the penalized risk minimization and held-out risk minimization is \emph{tree partition consistent}, i.e. satisfies
+\begin{align}
+    \mathbb{P}\left( \Pi(T^*) \subset \Pi(\hat{T}) \right) \rightarrow 1 \text{ as } n\rightarrow \infty
+\end{align}
+where $\Pi(T^*) \subset \Pi(\hat{T})$ if tree $\Pi(\hat{T})$ can be obtained by further splitting the hyperrectangels within tree $\Pi(T^*)$ (i.e. if $\Pi(\hat{T})$ has a finer or equal partition than $\Pi(T^*)$).
+
+
+\textbf{Proof Sketch:} For all $T \in \mathcal{T}_N$, $\Pi(T^*) \nsubseteq \Pi(T)$, there exists an $\mathcal{X}' \in \Pi(T)$ s.t. no $\mathcal{A} \in \Pi(T^*)$ contains $\mathcal{X}'$. Hence, there exists a minimal class of disjoint regions $\{ \mathcal{X}_1^0,\ldots,\mathcal{X}_{k'}^0 \} \in \Pi(T^*)$ s.t. $\mathcal{X}' \subset \cup_{i=1}^{k'} \mathcal{X}_i^0$, where $k' \geq 2$. We also can see that $\mathcal{X}' = \cup_{i=1}^{k'} \mathcal{X}_i^*$, where $\mathcal{X}_i^* = \mathcal{X}_i^0 \cap \mathcal{X}'$ (for $i=1,\ldots,k'$).
+
+
